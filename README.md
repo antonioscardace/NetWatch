@@ -1,5 +1,6 @@
 # NetWatch • Utilities Health Monitor
-_Project for "Distributed Systems Engineering" course._<br/>
+_Project for "Distributed Systems Engineering" course_<br/>
+_Grade: 30 with honors / 30_<br/>
 _[Antonio Scardace](https://linktr.ee/antonioscardace)_ @ _Dept of Math and Computer Science, University of Catania_
 
 [![CodeFactor](https://www.codefactor.io/repository/github/antonioscardace/netwatch/badge)](https://www.codefactor.io/repository/github/antonioscardace/netwatch)
