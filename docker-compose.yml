@@ -1,0 +1,300 @@
+services:
+
+  #-----------------------------------------#
+  #      Identity Manager - Redis Cache     #
+  #-----------------------------------------#
+
+  redis-idm:
+    image: redis:7.2.3-alpine
+    container_name: redis-idm
+    restart: "no"
+    command: ["redis-server", "--requirepass ${REDIS_IDM_PSW}", "--databases 1"]
+    expose:
+      - 6379
+
+  #-----------------------------------#
+  #      Identity Manager - MySQL     #
+  #-----------------------------------#
+
+  mysql-idm:
+    image: mysql:8.0
+    container_name: mysql-idm
+    restart: "no"
+    expose:
+      - 3306
+    volumes:
+      - mysql-idm-data:/var/lib/mysql
+      - $PWD/identity-manager/src/main/resources/dump.sql:/docker-entrypoint-initdb.d/dump.sql
+    environment:
+      - MYSQL_DATABASE=auth
+      - MYSQL_USER=${MYSQL_IDM_USER}
+      - MYSQL_PASSWORD=${MYSQL_IDM_PSW}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PSW}
+
+  #-----------------------------------------#
+  #      Identity Manager - Spring Boot     #
+  #-----------------------------------------#
+
+  identity-manager:
+    image: maven:3-amazoncorretto-21-debian
+    container_name: identity-manager
+    working_dir: /usr/src/app/
+    command: "mvn clean validate compile test spring-boot:run"
+    expose:
+      - 6000
+    volumes:
+      - $PWD/identity-manager:/usr/src/app/
+    depends_on:
+      - mysql-idm
+      - redis-idm
+    environment:
+      - MYSQL_URL=jdbc:mysql://mysql-idm:3306/auth
+      - MYSQL_USER=${MYSQL_IDM_USER}
+      - MYSQL_PSW=${MYSQL_IDM_PSW}
+      - REDIS_HOST=redis-idm
+      - REDIS_PORT=6379
+      - REDIS_PSW=${REDIS_IDM_PSW}
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+        delay: 10s
+
+  #-------------------------------#
+  #      Data Manager - MySQL     #
+  #-------------------------------#
+
+  mysql-manager:
+    image: mysql:8.0
+    container_name: mysql-manager
+    restart: "no"
+    expose:
+      - 3306
+    volumes:
+      - mysql-manager-data:/var/lib/mysql
+      - $PWD/data-manager/src/main/resources/dump.sql:/docker-entrypoint-initdb.d/dump.sql
+    environment:
+      - MYSQL_DATABASE=manager
+      - MYSQL_USER=${MYSQL_MANAGER_USER}
+      - MYSQL_PASSWORD=${MYSQL_MANAGER_PSW}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PSW}
+
+  #-------------------------------------#
+  #      Data Manager - Spring Boot     #
+  #-------------------------------------#
+
+  manager:
+    image: maven:3-amazoncorretto-21-debian
+    container_name: manager
+    working_dir: /usr/src/app/
+    command: "mvn clean validate compile test spring-boot:run"
+    expose:
+      - 6000
+    volumes:
+      - $PWD/data-manager:/usr/src/app/
+    depends_on:
+      - mysql-manager
+    environment:
+      - MYSQL_URL=jdbc:mysql://mysql-manager:3306/manager
+      - MYSQL_USER=${MYSQL_MANAGER_USER} 
+      - MYSQL_PSW=${MYSQL_MANAGER_PSW}
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+        delay: 10s
+
+  #----------------------------------#
+  #             RabbitMQ             #
+  #----------------------------------#
+
+  rabbitmq:
+    image: rabbitmq:3.12-management-alpine
+    container_name: rabbitmq
+    restart: on-failure
+    command: sh -c "rabbitmq-plugins enable rabbitmq_management; rabbitmq-server"
+    expose:
+      - 5672
+    ports:
+      - 15672:15672
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+      - $PWD/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PSW}
+
+  #------------------------------#
+  #      Monitor - Redis Set     #
+  #------------------------------#
+
+  redis-monitor:
+    image: redis:7.2.3-alpine
+    container_name: redis-monitor
+    restart: "no"
+    command: ["redis-server", "--requirepass ${REDIS_MONITOR_PSW}", "--databases 1"]
+    expose:
+      - 6379
+
+  #--------------------------------#
+  #      Monitor - Spring Boot     #
+  #--------------------------------#
+
+  monitor:
+    image: maven:3-amazoncorretto-21-debian
+    container_name: monitor
+    working_dir: /usr/src/app/
+    command: "mvn clean validate compile test spring-boot:run"
+    volumes:
+      - $PWD/monitor:/usr/src/app/
+    depends_on:
+      - manager
+      - redis-monitor
+      - rabbitmq
+    environment:
+      - MANAGER_API_URL=http://manager:6000/api/observations/
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USER=${RABBITMQ_USER}
+      - RABBITMQ_PSW=${RABBITMQ_PSW}
+      - RABBITMQ_EXCHANGE=notifications_exchange
+      - REDIS_HOST=redis-monitor
+      - REDIS_PORT=6379
+      - REDIS_PSW=${REDIS_MONITOR_PSW}
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+        delay: 10s
+
+  #-------------------------------------#
+  #      Notification - Spring Boot     #
+  #-------------------------------------#
+
+  notification:
+    image: maven:3-amazoncorretto-21-debian
+    container_name: notification
+    working_dir: /usr/src/app/
+    command: "mvn clean validate spring-boot:run"
+    volumes:
+      - $PWD/notification:/usr/src/app/
+    depends_on:
+      - rabbitmq
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USER=${RABBITMQ_USER}
+      - RABBITMQ_PSW=${RABBITMQ_PSW}
+      - RABBITMQ_EXCHANGE=notifications_exchange
+      - SMTP_HOST=smtp.gmail.com
+      - SMTP_PORT=465
+      - EMAIL_USER=${EMAIL_ADDR}
+      - EMAIL_PSW=${EMAIL_PSW}
+      - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+        delay: 10s
+
+  #----------------------------------#
+  #          Elasticsearch           #
+  #----------------------------------#
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.2.0
+    container_name: elasticsearch
+    restart: "no"
+    expose:
+      - 9200
+    volumes:
+      - es001-data:/usr/share/elasticsearch/data/
+    environment:
+      - node.name=es001
+      - discovery.type=single-node
+      - cluster.name=elasticsearch-cluster
+      - bootstrap.memory_lock=true
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+
+  #----------------------------------#
+  #             Logstash             #
+  #----------------------------------#
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.2.0
+    container_name: logstash
+    restart: on-failure
+    expose:
+      - 5044
+    volumes:
+      - $PWD/logstash-logging/:/usr/share/logstash/pipeline/
+    depends_on:
+      - rabbitmq
+      - elasticsearch
+    environment:
+      - XPACK_MONITORING_ENABLED=false
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USER=${RABBITMQ_USER}
+      - RABBITMQ_PSW=${RABBITMQ_PSW}
+      - RABBITMQ_EXCHANGE=notifications_exchange
+
+  #----------------------------------#
+  #              Grafana             #
+  #----------------------------------#
+
+  grafana-charts:
+    image: grafana/grafana:8.2.6
+    container_name: grafana-charts
+    restart: on-failure
+    user: "0:0"
+    ports:
+      - 8800:3000
+    environment:
+      - GRAFANA_USER=${GRAFANA_USER}
+      - GRAFANA_PASSWORD=${GRAFANA_PASSWORD}
+    depends_on:
+      - elasticsearch
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - $PWD/grafana-logging/certs:/etc/grafana/certs
+      - $PWD/grafana-logging/provisioning:/etc/grafana/provisioning
+      - $PWD/grafana-logging/grafana.ini:/etc/grafana/grafana.ini
+      - $PWD/grafana-logging/dashboard.json:/var/lib/grafana/dashboards/dashboard.json
+
+  #-------------------------------------------#
+  #      API Gateway - Spring Boot - Zuul     #
+  #-------------------------------------------#
+
+  api-gateway:
+    image: maven:3-amazoncorretto-11-debian
+    container_name: api-gateway
+    working_dir: /usr/src/app/
+    command: "mvn clean validate spring-boot:run"
+    ports:
+      - 8888:8888
+    volumes:
+      - $PWD/api-gateway:/usr/src/app/
+    environment:
+      - AUTHN_URL=http://identity-manager:6000/api/authentication
+      - AUTHZ_URL=http://identity-manager:6000/api/authorization
+    depends_on:
+      - identity-manager
+      - manager
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+        delay: 10s
+
+#------------------------#
+#    Project Volumes     #
+#------------------------#
+
+volumes:
+  mysql-idm-data:
+  mysql-manager-data:
+  rabbitmq-data:
+  es001-data:
+  grafana-data:
