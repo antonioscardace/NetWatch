@@ -6,12 +6,13 @@ _[Antonio Scardace](https://linktr.ee/antonioscardace)_ @ _Dept of Math and Comp
 [![CodeFactor](https://www.codefactor.io/repository/github/antonioscardace/netwatch/badge)](https://www.codefactor.io/repository/github/antonioscardace/netwatch)
 [![License](https://img.shields.io/github/license/antonioscardace/netwatch.svg)](https://github.com/antonioscardace/netwatch/blob/master/LICENSE)
 [![Open Issues](https://img.shields.io/github/issues/antonioscardace/netwatch.svg)](https://github.com/antonioscardace/netwatch/issues)
+[![CI for Testing](https://github.com/antonioscardace/NetWatch/actions/workflows/ci-test.yml/badge.svg)](https://github.com/antonioscardace/NetWatch/actions/workflows/ci-test.yml)
 
 ## Introduction
 
 The project is a health checker. It aims to check in real-time the health of each observed local utility.<br/>
 The utility can be a Docker Container, a Machine, or a Network Device in your local network.<br/>
-If a utility changes its state (i.e. **goes offline** or **comes back online**), the monitor notifies the utility referent.<br/>
+The monitor notifies the utility referent if it changes its state (i.e. **goes offline** or **comes back online**).<br/>
 The alert can be a Slack message, an Email, or a Telegram message like these:
 
 <img src="/docs/snaps/telegram.png" alt="Telegram" width="500px"/>
@@ -47,7 +48,7 @@ Main Notes:
 - The HTTP connection between **Monitor** and **Data Manager** is a Keep-Alive (persistent) connection.
 - **Monitor** implements the Factory-Method Design Pattern for the _request_ module.
 - **Notification** implements the Factory-Method Design Pattern for the _sender_ module.
-- Both **Identity Manager** and **Monitor** microservices use a Redis cache to store, respectively, active tokens and offline utilities. Storing data in a Redis cache rather than a local data structure (e.g. Hash Maps) offers several advantages like scalability, distribution, and persistence.
+- Both **Identity Manager** and **Monitor** microservices use a Redis cache to store active tokens and offline utilities, respectively. Storing data in a Redis cache rather than a local data structure (e.g. Hash Maps) offers several advantages like scalability, distribution, and persistence.
 
 Here are some useful links for communication:
 
