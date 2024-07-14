@@ -1,10 +1,9 @@
-name: CI for Testing
+name: tests
+run-name: CI for Testing
 
 on:
   push:
-    branches: [ "main" ]
   pull_request:
-    branches: [ "main" ]
 
 jobs:
 
