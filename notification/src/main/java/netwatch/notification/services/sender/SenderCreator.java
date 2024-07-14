@@ -20,15 +20,11 @@ public class SenderCreator {
     }
 
     public ISender getSender(String contactType) {
-        switch (contactType) {
-            case "email":
-                return this.applicationContext.getBean(EmailSender.class);
-            case "slack":
-                return this.applicationContext.getBean(SlackSender.class);
-            case "telegram":
-                return this.applicationContext.getBean(TelegramSender.class);
-            default:
-                throw new IllegalArgumentException("Unknown Contact type " + contactType);
-        }
+        return switch (contactType) {
+            case "email" -> this.applicationContext.getBean(EmailSender.class);
+            case "slack" -> this.applicationContext.getBean(SlackSender.class);
+            case "telegram" -> this.applicationContext.getBean(TelegramSender.class);
+            default -> throw new IllegalArgumentException("Unknown Contact type " + contactType);
+        };
     }
 }
