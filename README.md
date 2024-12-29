@@ -1,14 +1,9 @@
 # NetWatch • Utilities Health Monitor
-_Project for "Distributed Systems Engineering" course_<br/>
-_Grade: 30 with honors / 30_<br/>
-_[Antonio Scardace](https://linktr.ee/antonioscardace)_ @ _Dept of Math and Computer Science, University of Catania_
 
 [![CodeFactor](https://www.codefactor.io/repository/github/antonioscardace/netwatch/badge)](https://www.codefactor.io/repository/github/antonioscardace/netwatch)
 [![License](https://img.shields.io/github/license/antonioscardace/netwatch.svg)](https://github.com/antonioscardace/netwatch/blob/master/LICENSE)
 [![Open Issues](https://img.shields.io/github/issues/antonioscardace/netwatch.svg)](https://github.com/antonioscardace/netwatch/issues)
 [![CI for Testing](https://github.com/antonioscardace/NetWatch/actions/workflows/ci-test.yml/badge.svg)](https://github.com/antonioscardace/NetWatch/actions/workflows/ci-test.yml)
-
-## Introduction
 
 The project is a health checker. It aims to check in real-time the health of each observed local utility.<br/>
 The utility can be a Docker Container, a Machine, or a Network Device in your local network.<br/>
