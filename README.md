@@ -41,13 +41,7 @@ Main Notes:
 - **Monitor** implements the Factory-Method Design Pattern for the _request_ module.
 - **Notification** implements the Factory-Method Design Pattern for the _sender_ module.
 
-Here are some useful links for communication:
-
-- **Telegram Bot**: [BotFather](https://core.telegram.org/bots/tutorial)
-- **Slack**: [Incoming WebHooks](https://slack.dev/java-slack-sdk/guides/incoming-webhooks)
-- **Email with a 2FA Account**: [Make an App Custom Password](https://stackoverflow.com/questions/26736062/sending-email-fails-when-two-factor-authentication-is-on-for-gmail#answer-27130058)
-
-## Notifications Demo
+## Example
 
 <img src="/docs/snaps/telegram.png" alt="Telegram" width="530px"/>
 <img src="/docs/snaps/email-online.png" alt="Telegram" width="530px"/>
@@ -56,8 +50,6 @@ Here are some useful links for communication:
 
 So that the repository is successfully cloned and the project runs, there are a few prerequisites:
 
-* A stable internet connection.
-* A certain amount of RAM and CPU is required.
 * Any set of valid credentials or tokens (e.g. for Telegram) to send notifications.
 * Need to download and install [Docker](https://docs.docker.com/get-docker/).
 
