@@ -30,7 +30,7 @@ I also had the opportunity to practice the following skills:
 
 Each microservice is contained in a Docker Container.<br/>
 The only reachable containers in the Docker Network are Frontend, API Gateway, and Grafana.<br/>
-The UML of the internal structure of each microservice is stored in [/docs/uml/](/docs/uml/).<br/>
+The UML of the internal structure of each microservice is stored in [/docs/uml/](/docs/uml/)<br/>
 
 <img src="/docs/images/infrastructure.svg" alt="Infrastructure"/>
 
@@ -48,12 +48,8 @@ Main Notes:
 
 ## Getting Started
 
-So that the repository is successfully cloned and the project runs, there are a few prerequisites:
-
-* Any set of valid credentials or tokens (e.g. for Telegram) to send notifications.
-* Need to download and install [Docker](https://docs.docker.com/get-docker/).
-
-Then, the repo can be cloned, dependencies can be installed, and the project can be run.
+* Get any set of valid credentials or tokens (e.g. for Telegram) to send notifications.
+* Download and install [Docker](https://docs.docker.com/get-docker/).
 
 ```sh
    $ git clone https://github.com/antonioscardace/NetWatch.git
