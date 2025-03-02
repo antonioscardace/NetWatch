@@ -1,0 +1,15 @@
+.DS_Store
+
+**/release.properties
+*.class
+*.jar
+*.war
+
+sonarqube-scan.sh
+*.txt
+
+.env
+.vscode/
+
+**/target/
+**/node_modules/
