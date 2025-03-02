@@ -1,0 +1,14 @@
+apiVersion: 1
+
+datasources:
+  - name: NetWatch-Notifics
+    type: elasticsearch
+    url: http://elasticsearch:9200/
+    access: proxy
+    jsonData:
+      indexName: 'notifics'
+      timeField: '@timestamp'
+      esVersion: '7.10.0'
+      maxConcurrentShardRequests: 10
+      tlsSkipVerify: true
+      timeout: 200
