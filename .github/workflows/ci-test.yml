@@ -1,0 +1,65 @@
+name: tests
+run-name: CI for Testing
+
+on:
+  push:
+  pull_request:
+
+jobs:
+
+  #-------------------------------#
+  #   Data-Manager Microservice   #
+  #-------------------------------#
+
+  test_data_manager:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'corretto'
+          cache: maven
+
+      - name: Run Maven Tests
+        run: cd data-manager/ && mvn -B clean package
+
+  #-----------------------------------#
+  #   Identity-Manager Microservice   #
+  #-----------------------------------#
+
+  test_idm:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'corretto'
+          cache: maven
+
+      - name: Run Maven Tests
+        run: cd identity-manager/ && mvn -B clean package
+
+  #--------------------------#
+  #   Monitor Microservice   #
+  #--------------------------#
+
+  test_monitor:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'corretto'
+          cache: maven
+
+      - name: Run Maven Tests
+        run: cd monitor/ && mvn -B clean package -DskipTests
