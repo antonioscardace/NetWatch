@@ -10,7 +10,8 @@ The utility can be a Docker Container, a Machine, or a Network Device in your lo
 The monitor notifies the utility referent if it changes its state (i.e. **goes offline** or **comes back online**).<br/>
 The alert can be a Slack message, an Email, or a Telegram message like these:
 
-## Exam Goals
+<img src="/docs/snaps/telegram.png" alt="Telegram" width="500px"/>
+<img src="/docs/snaps/email-online.png" alt="Telegram" width="500px"/>
 
 An accurate report can be found in [/docs/report.pdf](/docs/report.pdf)<br/>
 This project was created as an exam project to test a set of skills, including:
@@ -33,18 +34,6 @@ The only reachable containers in the Docker Network are Frontend, API Gateway, a
 The UML of the internal structure of each microservice is stored in [/docs/uml/](/docs/uml/)<br/>
 
 <img src="/docs/images/infrastructure.svg" alt="Infrastructure"/>
-
-Main Notes:
-
-- **RabbitMQ** provides an Exchange implementing the Publish-Subscribe Design Pattern.
-- The HTTP connection between **Monitor** and **Data Manager** is a Keep-Alive (persistent) connection.
-- **Monitor** implements the Factory-Method Design Pattern for the _request_ module.
-- **Notification** implements the Factory-Method Design Pattern for the _sender_ module.
-
-## Example
-
-<img src="/docs/snaps/telegram.png" alt="Telegram" width="530px"/>
-<img src="/docs/snaps/email-online.png" alt="Telegram" width="530px"/>
 
 ## Getting Started
 
