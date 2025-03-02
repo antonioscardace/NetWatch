@@ -1,0 +1,19 @@
+{
+    "rabbit_version": "3.12.10",
+    "rabbitmq_version": "3.12.10",
+    "product_name": "RabbitMQ",
+    "product_version": "3.12.10",
+    "users": [],
+    "permissions": [],
+    "exchanges": [{
+        "name": "notifications_exchange",
+        "vhost": "/",
+        "type": "fanout",
+        "durable": true,
+        "auto_delete": false,
+        "internal": false,
+        "arguments": {}
+    }],
+    "queues": [],
+    "bindings": []
+}
