@@ -35,6 +35,13 @@ The UML of the internal structure of each microservice is stored in [/docs/uml/]
 
 <img src="/docs/images/infrastructure.svg" alt="Infrastructure"/>
 
+Main Notes:
+
+- _RabbitMQ_ provides an Exchange implementing the Publish-Subscribe Design Pattern.
+- The HTTP connection between _Monitor_ and _Data Manager_ is a Keep-Alive (persistent) connection.
+- _Monitor_ implements the Factory-Method Design Pattern for the _request_ module.
+- _Notification_ implements the Factory-Method Design Pattern for the _sender_ module.
+
 ## Getting Started
 
 * Get any set of valid credentials or tokens (e.g. for Telegram) to send notifications.
